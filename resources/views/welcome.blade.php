@@ -37,7 +37,6 @@
                 <p><a class="font-bold text-blue-600" href="{{ route('view.login') }}">Login</a> to create posts</p>
             @endauth
         </div>
-        @include('layout.messages')
     </section>
     <section class="w-full max-w-lg p-2 rounded mx-auto">
         <div class="">
@@ -57,13 +56,15 @@
                                 <li class="inline-flex">{{ $post->updated_at->diffForHumans() }}</li>
                             </ul>
                         </div>
-                        @if ($post->user_id == auth()->user()->id)
-                            <div class="text-xs ">
-                                <a href="#Edit">Edit</a>
-                                <a href="#Delete">Delete</a>
-                                <a href="#Private">Private</a>
-                            </div>
-                        @endif
+                        @auth
+                            @if ($post->user_id === auth()->user()->id)
+                                <div class="text-xs ">
+                                    <a href="{{ route('edit.post', ['id' => $post->id]) }}">Edit</a>
+                                    <a href="{{ route('delete.post', ['id' => $post->id]) }}">Delete</a>
+                                    <a href="#Private">Private</a>
+                                </div>
+                            @endif
+                        @endauth
                     </div>
                     <hr class="my-3 border border-red-600">
                     <div class="h-full">
@@ -76,18 +77,14 @@
                     </div>
                     <hr class="my-3 border border-red-600">
                     <div>
-                        <button onclick="toggleComment({{ $post->id }})" type="button">Comments</button>
-                        <ul id="comments_{{ $post->id }}" class="text-xs hidden overflow-y-scroll pr-3 h-[200px]">
+                        <button id="toggleCommentBtn" onclick="toggleComment({{ $post->id }})"
+                            type="button">Comments</button>
+                        <ul id="comments_{{ $post->id }}"
+                            class="text-xs hidden overflow-y-scroll pr-3 h-full max-h-[200px]">
                             <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment1</li>
-                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment2</li>
-                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment3</li>
-                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment3</li>
-                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment3</li>
-                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment3</li>
-                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment3</li>
-                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment3</li>
-                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment3</li>
-                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment3</li>
+                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment1</li>
+                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment1</li>
+                            <li class="p-2 bg-slate-200 rounded mt-2 ml-3">Comment1</li>
                         </ul>
                     </div>
                 </div>
@@ -95,10 +92,16 @@
 
         @endif
 
-
-
     </section>
-
+    @if ($errors->any())
+        <ul class="fixed bottom-3 right-3">
+            @foreach ($errors->all() as $error)
+                <li class="text-xs mt-3  rounded-md text-red-950 bg-red-200 p-2">
+                    {{ $error }}
+                </li>
+            @endforeach
+        </ul>
+    @endif
     @if (session()->has('message'))
         <p class="p-2 fixed bottom-3 right-3 bg-green-900 rounded text-white z-50" id="popup"> {{ session('message') }}
         </p>
@@ -120,8 +123,8 @@
             }
 
             setTimeout(() => {
-                document.getElementById("popup").remove();
-            }, 10000);
+                document.querySelector('#popup').remove();
+            }, 5000);
         </script>
     @endpush
 @endsection
