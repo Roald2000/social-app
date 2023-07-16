@@ -7,8 +7,8 @@
 - [Node JS](https://nodejs.org/en)
 - [Composer](https://getcomposer.org/)
 
-## Inside the app directory
-
+## Inside
+- navigate to the project root directory
 - Run this commands in the terminal
   - npm install -- for installing dependencies
     - after that run ``npm run dev``
